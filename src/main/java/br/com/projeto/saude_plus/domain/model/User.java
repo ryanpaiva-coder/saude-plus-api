@@ -25,7 +25,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class User {
+public abstract class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
