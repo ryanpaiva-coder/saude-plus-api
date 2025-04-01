@@ -55,6 +55,12 @@ public abstract class User {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
     public void setPassword(String password) {
         this.password = hashPassword(password);
     }
