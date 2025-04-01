@@ -1,6 +1,7 @@
 package br.com.projeto.saude_plus.domain.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,5 +42,13 @@ public class UserService {
     @Transactional
     public List<User> list() {
         return userRepository.findAll();
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public User save(User user) {
+        return userRepository.save(user);
     }
 }
