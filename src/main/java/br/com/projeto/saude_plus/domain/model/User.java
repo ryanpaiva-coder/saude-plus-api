@@ -1,6 +1,11 @@
 package br.com.projeto.saude_plus.domain.model;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import br.com.projeto.saude_plus.domain.enums.UserRole;
 import jakarta.persistence.Column;
@@ -50,4 +55,11 @@ public abstract class User {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+    public void setPassword(String password) {
+        this.password = hashPassword(password);
+    }
+
+    private String hashPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
+    }
 }
