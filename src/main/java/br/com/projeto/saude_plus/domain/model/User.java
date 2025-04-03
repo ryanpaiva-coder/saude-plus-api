@@ -9,12 +9,16 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import br.com.projeto.saude_plus.domain.enums.UserRole;
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
+import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -25,7 +29,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -62,7 +68,11 @@ public abstract class User {
     private LocalDateTime updatedAt;
 
     public void setPassword(String password) {
-        this.password = hashPassword(password);
+        if (!password.startsWith("$2a$")) {
+            this.password = hashPassword(password);            
+        } else {
+            this.password = password;
+        }
     }
 
     private String hashPassword(String password) {
