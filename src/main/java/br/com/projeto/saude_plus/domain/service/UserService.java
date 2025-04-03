@@ -25,18 +25,15 @@ public class UserService {
 
     @Transactional
     public User update(final User user, UUID userId) {
+        User existingUser = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
 
-        User findUser = search(userId);
-        findUser.setName(user.getName());
-
-        return userRepository.save(findUser);
+        existingUser.setName(user.getName());
+        return userRepository.save(existingUser);
     }
 
     @Transactional
     public User search(final UUID userId) {
-        return userRepository
-                .findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
     }
 
     @Transactional
