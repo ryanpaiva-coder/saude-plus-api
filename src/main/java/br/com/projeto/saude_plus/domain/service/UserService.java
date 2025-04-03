@@ -51,4 +51,10 @@ public class UserService {
     public User save(User user) {
         return userRepository.save(user);
     }
+
+    @Transactional
+    public void delete(final UUID userId) {
+        User user = search(userId);
+        userRepository.delete(user);
+    }
 }
