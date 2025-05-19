@@ -77,29 +77,3 @@ CREATE TABLE Consulta (
     FOREIGN KEY (id_medico) REFERENCES Medico(id_medico),
     FOREIGN KEY (id_paciente) REFERENCES Paciente(id_usuario)
 );
-
-CREATE TABLE Receita (
-    id_receita INT PRIMARY KEY,
-    data_emissao DATE,
-    validacao BOOLEAN,
-    id_consulta INT,
-    FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta)
-);
-
-CREATE TABLE Medicamento (
-    id_medicamento INT PRIMARY KEY,
-    nome VARCHAR(100),
-    tipo VARCHAR(50),
-    descricao TEXT,
-    dose INT
-);
-
-CREATE TABLE Receita_Medicamento (
-    id_receita INT,
-    id_medicamento INT,
-    posologia TEXT,
-    observacao TEXT,
-    PRIMARY KEY (id_receita, id_medicamento),
-    FOREIGN KEY (id_receita) REFERENCES Receita(id_receita),
-    FOREIGN KEY (id_medicamento) REFERENCES Medicamento(id_medicamento)
-);
