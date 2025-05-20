@@ -43,27 +43,19 @@ CREATE TABLE Especialidade (
 );
 
 CREATE TABLE Medico (
-    id_medico INT PRIMARY KEY AUTO_INCREMENT,
+    id_medico INT PRIMARY KEY,
+    crm VARCHAR(12),
     cnpj_clinica VARCHAR(20),
-    id_usuario INT,
     id_especialidade INT,
     FOREIGN KEY (cnpj_clinica) REFERENCES Clinica(cnpj_clinica),
-    FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario)
+    FOREIGN KEY (id_medico) REFERENCES Usuario(id_usuario),
     FOREIGN KEY (id_especialidade) REFERENCES Especialidade(id_especialidade)
 );
 
-CREATE TABLE CRM_Medico (
-    id_crm INT PRIMARY KEY AUTO_INCREMENT,
-    id_medico INT,
-    crm VARCHAR(20),
-    uf VARCHAR(2),
-    FOREIGN KEY (id_medico) REFERENCES Medico(id_medico)
-);
-
 CREATE TABLE Paciente (
-    id_usuario INT PRIMARY KEY,
+    id_paciente INT PRIMARY KEY,
     descricao TEXT,
-    FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario)
+    FOREIGN KEY (id_paciente) REFERENCES Usuario(id_usuario)
 );
 
 CREATE TABLE Consulta (
@@ -75,5 +67,5 @@ CREATE TABLE Consulta (
     id_medico INT,
     id_paciente INT,
     FOREIGN KEY (id_medico) REFERENCES Medico(id_medico),
-    FOREIGN KEY (id_paciente) REFERENCES Paciente(id_usuario)
+    FOREIGN KEY (id_paciente) REFERENCES Paciente(id_paciente)
 );
