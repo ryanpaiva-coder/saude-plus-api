@@ -2,19 +2,24 @@ package br.com.projeto.saude_plus.domain.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "Endereco")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Endereco {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_endereco")
+    @EqualsAndHashCode.Include
     private Integer id;
 
     @Column(length = 100)
