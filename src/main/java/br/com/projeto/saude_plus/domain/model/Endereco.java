@@ -22,7 +22,7 @@ public class Endereco {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_endereco")
     @EqualsAndHashCode.Include
-    private Integer id;
+    private Long id;
 
     @NotBlank
     @Size(max = 100)

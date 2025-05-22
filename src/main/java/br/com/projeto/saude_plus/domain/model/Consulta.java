@@ -22,7 +22,7 @@ public class Consulta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_consulta")
     @EqualsAndHashCode.Include
-    private Integer id;
+    private Long id;
 
     @NotNull
     @Column(nullable = false)

@@ -17,7 +17,7 @@ public class Especialidade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_especialidade")
     @EqualsAndHashCode.Include
-    private Integer id;
+    private Long id;
 
     @NotBlank
     @Size(max = 50)
