@@ -61,8 +61,8 @@ public abstract class Usuario {
     @Column(nullable = false, length = 1)
     private String sexo;
 
-    @Size(max = 9)
-    @Column(nullable = true, length = 9)
+    @Size(max = 11)
+    @Column(nullable = true, length = 11)
     private String telefone;
 
     @NotNull

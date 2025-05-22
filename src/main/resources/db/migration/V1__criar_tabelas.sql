@@ -3,15 +3,15 @@ CREATE TABLE Endereco (
     logradouro VARCHAR(100),
     numero VARCHAR(10),
     bairro VARCHAR(50),
-    cep VARCHAR(10),
+    cep VARCHAR(8),
     cidade VARCHAR(50),
     estado VARCHAR(2)
 );
 
 CREATE TABLE Clinica (
-    cnpj_clinica VARCHAR(20) PRIMARY KEY,
-    nome_comercial VARCHAR(100),
-    telefone VARCHAR(15),
+    cnpj_clinica VARCHAR(14) PRIMARY KEY,
+    nome_fantasia VARCHAR(100),
+    telefone VARCHAR(11),
     id_endereco INT,
     FOREIGN KEY (id_endereco) REFERENCES Endereco(id_endereco)
 );
@@ -28,7 +28,7 @@ CREATE TABLE Usuario (
     email VARCHAR(255) UNIQUE NOT NULL,
     senha VARCHAR(255) NOT NULL,
     sexo CHAR(1) CHECK (sexo IN ('M', 'F')) NOT NULL,
-    telefone VARCHAR(9),
+    telefone VARCHAR(11),
     data_nascimento DATE NOT NULL,
     ativo BOOLEAN DEFAULT TRUE,
     id_role INT,
