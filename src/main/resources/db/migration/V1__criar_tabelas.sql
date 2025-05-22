@@ -66,6 +66,7 @@ CREATE TABLE Consulta (
     observacao TEXT,
     id_medico INT,
     id_paciente INT,
+    status VARCHAR(20) NOT NULL DEFAULT 'AGENDADA',
     FOREIGN KEY (id_medico) REFERENCES Medico(id_medico),
     FOREIGN KEY (id_paciente) REFERENCES Paciente(id_paciente)
 );
