@@ -23,12 +23,12 @@ CREATE TABLE Role (
 
 CREATE TABLE Usuario (
     id_usuario INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(100) NOT NULL,
-    cpf VARCHAR(14) UNIQUE NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
+    nome VARCHAR(64) NOT NULL,
+    cpf VARCHAR(11) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
     senha VARCHAR(255) NOT NULL,
     sexo CHAR(1) CHECK (sexo IN ('M', 'F')) NOT NULL,
-    telefone VARCHAR(15),
+    telefone VARCHAR(9),
     data_nascimento DATE NOT NULL,
     ativo BOOLEAN DEFAULT TRUE,
     id_role INT,
