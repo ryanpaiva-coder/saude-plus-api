@@ -3,15 +3,15 @@ CREATE TABLE Endereco (
     logradouro VARCHAR(100),
     numero VARCHAR(10),
     bairro VARCHAR(50),
-    cep VARCHAR(10),
+    cep VARCHAR(8),
     cidade VARCHAR(50),
     estado VARCHAR(2)
 );
 
 CREATE TABLE Clinica (
-    cnpj_clinica VARCHAR(20) PRIMARY KEY,
-    nome_comercial VARCHAR(100),
-    telefone VARCHAR(15),
+    cnpj_clinica VARCHAR(14) PRIMARY KEY,
+    nome_fantasia VARCHAR(100),
+    telefone VARCHAR(11),
     id_endereco INT,
     FOREIGN KEY (id_endereco) REFERENCES Endereco(id_endereco)
 );
@@ -23,12 +23,12 @@ CREATE TABLE Role (
 
 CREATE TABLE Usuario (
     id_usuario INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(100) NOT NULL,
-    cpf VARCHAR(14) UNIQUE NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
+    nome VARCHAR(64) NOT NULL,
+    cpf VARCHAR(11) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
     senha VARCHAR(255) NOT NULL,
     sexo CHAR(1) CHECK (sexo IN ('M', 'F')) NOT NULL,
-    telefone VARCHAR(15),
+    telefone VARCHAR(11),
     data_nascimento DATE NOT NULL,
     ativo BOOLEAN DEFAULT TRUE,
     id_role INT,
@@ -66,6 +66,7 @@ CREATE TABLE Consulta (
     observacao TEXT,
     id_medico INT,
     id_paciente INT,
+    status VARCHAR(20) NOT NULL DEFAULT 'AGENDADA',
     FOREIGN KEY (id_medico) REFERENCES Medico(id_medico),
     FOREIGN KEY (id_paciente) REFERENCES Paciente(id_paciente)
 );
