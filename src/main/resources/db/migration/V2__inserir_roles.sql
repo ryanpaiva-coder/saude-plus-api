@@ -1,0 +1,3 @@
+INSERT INTO role (nome) VALUES ('GERENTE');
+INSERT INTO role (nome) VALUES ('MEDICO');
+INSERT INTO role (nome) VALUES ('PACIENTE');
