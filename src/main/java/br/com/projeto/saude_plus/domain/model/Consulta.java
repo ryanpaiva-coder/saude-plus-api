@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import br.com.projeto.saude_plus.domain.enums.StatusConsulta;
 
 @Entity
-@Table(name = "Consulta")
+@Table(name = "consulta")
 @Getter
 @Setter
 @NoArgsConstructor

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Entity
-@Table(name = "Clinica")
+@Table(name = "clinica")
 @Getter
 @Setter
 @NoArgsConstructor
