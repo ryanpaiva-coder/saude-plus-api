@@ -9,7 +9,8 @@ CREATE TABLE endereco (
 );
 
 CREATE TABLE clinica (
-    cnpj_clinica VARCHAR(14) PRIMARY KEY,
+    id_clinica INT PRIMARY KEY AUTO_INCREMENT,
+    cnpj_clinica VARCHAR(14),
     nome_fantasia VARCHAR(100),
     telefone VARCHAR(11),
     id_endereco INT,
@@ -45,9 +46,9 @@ CREATE TABLE especialidade (
 CREATE TABLE medico (
     id_usuario INT PRIMARY KEY,
     crm VARCHAR(12),
-    cnpj_clinica VARCHAR(20),
+    id_clinica INT,
     id_especialidade INT,
-    FOREIGN KEY (cnpj_clinica) REFERENCES clinica(cnpj_clinica),
+    FOREIGN KEY (id_clinica) REFERENCES clinica(id_clinica),
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
     FOREIGN KEY (id_especialidade) REFERENCES especialidade(id_especialidade)
 );
