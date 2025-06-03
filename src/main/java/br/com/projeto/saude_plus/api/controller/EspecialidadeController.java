@@ -1,5 +1,8 @@
 package br.com.projeto.saude_plus.api.controller;
 
+import br.com.projeto.saude_plus.api.dto.especialidadeDTO.EspecialidadeInputDTO;
+import br.com.projeto.saude_plus.api.dto.especialidadeDTO.EspecialidadeOutputDTO;
+import br.com.projeto.saude_plus.assembler.EspecialidadeAssembler;
 import br.com.projeto.saude_plus.domain.model.Especialidade;
 import br.com.projeto.saude_plus.domain.service.EspecialidadeService;
 import jakarta.validation.Valid;
@@ -8,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/especialidades")
@@ -16,21 +20,31 @@ public class EspecialidadeController {
     @Autowired
     private EspecialidadeService especialidadeService;
 
+    @Autowired
+    private EspecialidadeAssembler especialidadeAssembler;
+
     @GetMapping
-    public ResponseEntity<List<Especialidade>> listarTodas() {
+    public ResponseEntity<List<EspecialidadeOutputDTO>> listarTodas() {
         List<Especialidade> especialidades = especialidadeService.listarTodas();
-        return ResponseEntity.ok(especialidades);
+        List<EspecialidadeOutputDTO> especialidadeDTOs = especialidades.stream()
+                .map(especialidadeAssembler::toOutputDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(especialidadeDTOs);
     }
 
     @PostMapping
-    public ResponseEntity<Especialidade> cadastrar(@Valid @RequestBody Especialidade especialidade) {
-        Especialidade nova = especialidadeService.cadastrar(especialidade);
-        return ResponseEntity.ok(nova);
+    public ResponseEntity<EspecialidadeOutputDTO> cadastrar(
+            @Valid @RequestBody EspecialidadeInputDTO especialidadeInputDTO) {
+        Especialidade especialidade = especialidadeAssembler.toEntity(especialidadeInputDTO);
+        Especialidade especialidadeSalva = especialidadeService.cadastrar(especialidade);
+        EspecialidadeOutputDTO especialidadeDTO = especialidadeAssembler.toOutputDTO(especialidadeSalva);
+        return ResponseEntity.ok(especialidadeDTO);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Especialidade> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<EspecialidadeOutputDTO> buscarPorId(@PathVariable Long id) {
         Especialidade especialidade = especialidadeService.buscarPorId(id);
-        return ResponseEntity.ok(especialidade);
+        EspecialidadeOutputDTO especialidadeDTO = especialidadeAssembler.toOutputDTO(especialidade);
+        return ResponseEntity.ok(especialidadeDTO);
     }
 }

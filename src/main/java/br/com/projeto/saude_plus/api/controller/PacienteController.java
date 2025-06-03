@@ -1,13 +1,18 @@
 package br.com.projeto.saude_plus.api.controller;
 
+import br.com.projeto.saude_plus.api.dto.pacienteDTO.PacienteInputDTO;
+import br.com.projeto.saude_plus.api.dto.pacienteDTO.PacienteOutputDTO;
+import br.com.projeto.saude_plus.assembler.PacienteAssembler;
 import br.com.projeto.saude_plus.domain.model.Paciente;
 import br.com.projeto.saude_plus.domain.service.PacienteService;
 import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/pacientes")
@@ -16,40 +21,45 @@ public class PacienteController {
     @Autowired
     private PacienteService pacienteService;
 
+    @Autowired
+    private PacienteAssembler pacienteAssembler;
+
     @PostMapping
-    public ResponseEntity<Paciente> cadastrar(@Valid @RequestBody Paciente paciente) {
+    public ResponseEntity<PacienteOutputDTO> cadastrar(@Valid @RequestBody PacienteInputDTO pacienteInputDTO) {
+        Paciente paciente = pacienteAssembler.toEntity(pacienteInputDTO);
         Paciente novoPaciente = pacienteService.cadastrarPaciente(paciente);
-        return ResponseEntity.ok(novoPaciente);
+        return ResponseEntity.ok(pacienteAssembler.toOutputDTO(novoPaciente));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Paciente> atualizar(@PathVariable Long id, @Valid @RequestBody Paciente paciente) {
+    public ResponseEntity<PacienteOutputDTO> atualizar(@PathVariable Long id, @Valid @RequestBody PacienteInputDTO pacienteInputDTO) {
+        Paciente paciente = pacienteAssembler.toEntity(pacienteInputDTO);
         Paciente pacienteAtualizado = pacienteService.atualizarPaciente(id, paciente);
-        return ResponseEntity.ok(pacienteAtualizado);
+        return ResponseEntity.ok(pacienteAssembler.toOutputDTO(pacienteAtualizado));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Paciente> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<PacienteOutputDTO> buscarPorId(@PathVariable Long id) {
         Paciente paciente = pacienteService.buscarPorId(id);
-        return ResponseEntity.ok(paciente);
+        return ResponseEntity.ok(pacienteAssembler.toOutputDTO(paciente));
     }
 
     @GetMapping
-    public ResponseEntity<List<Paciente>> listarTodos() {
+    public ResponseEntity<List<PacienteOutputDTO>> listarTodos() {
         List<Paciente> pacientes = pacienteService.listarTodos();
-        return ResponseEntity.ok(pacientes);
+        return ResponseEntity.ok(mapToOutputDTOList(pacientes));
     }
 
     @GetMapping("/ativos")
-    public ResponseEntity<List<Paciente>> listarAtivos() {
+    public ResponseEntity<List<PacienteOutputDTO>> listarAtivos() {
         List<Paciente> pacientes = pacienteService.listarAtivos();
-        return ResponseEntity.ok(pacientes);
+        return ResponseEntity.ok(mapToOutputDTOList(pacientes));
     }
 
     @GetMapping("/desativados")
-    public ResponseEntity<List<Paciente>> listarDesativados() {
+    public ResponseEntity<List<PacienteOutputDTO>> listarDesativados() {
         List<Paciente> pacientes = pacienteService.listarDesativados();
-        return ResponseEntity.ok(pacientes);
+        return ResponseEntity.ok(mapToOutputDTOList(pacientes));
     }
 
     @DeleteMapping("/{id}")
@@ -59,22 +69,30 @@ public class PacienteController {
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<Paciente> buscarPorEmail(@PathVariable String email) {
+    public ResponseEntity<PacienteOutputDTO> buscarPorEmail(@PathVariable String email) {
         return pacienteService.buscarPorEmail(email)
+                .map(pacienteAssembler::toOutputDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/cpf/{cpf}")
-    public ResponseEntity<Paciente> buscarPorCpf(@PathVariable String cpf) {
+    public ResponseEntity<PacienteOutputDTO> buscarPorCpf(@PathVariable String cpf) {
         return pacienteService.buscarPorCpf(cpf)
+                .map(pacienteAssembler::toOutputDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<List<Paciente>> buscarPorNome(@PathVariable String nome) {
+    public ResponseEntity<List<PacienteOutputDTO>> buscarPorNome(@PathVariable String nome) {
         List<Paciente> pacientes = pacienteService.buscarPorNome(nome);
-        return ResponseEntity.ok(pacientes);
+        return ResponseEntity.ok(mapToOutputDTOList(pacientes));
+    }
+
+    private List<PacienteOutputDTO> mapToOutputDTOList(List<Paciente> pacientes) {
+        return pacientes.stream()
+                .map(pacienteAssembler::toOutputDTO)
+                .collect(Collectors.toList());
     }
 }

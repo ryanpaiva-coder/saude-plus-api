@@ -1,5 +1,8 @@
 package br.com.projeto.saude_plus.api.controller;
 
+import br.com.projeto.saude_plus.api.dto.medicoDTO.MedicoInputDTO;
+import br.com.projeto.saude_plus.api.dto.medicoDTO.MedicoOutputDTO;
+import br.com.projeto.saude_plus.assembler.MedicoAssembler;
 import br.com.projeto.saude_plus.domain.model.Medico;
 import br.com.projeto.saude_plus.domain.service.MedicoService;
 import jakarta.validation.Valid;
@@ -8,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/medicos")
@@ -16,40 +20,42 @@ public class MedicoController {
     @Autowired
     private MedicoService medicoService;
 
+    @Autowired
+    private MedicoAssembler medicoAssembler;
+
     @PostMapping
-    public ResponseEntity<Medico> cadastrar(@Valid @RequestBody Medico medico) {
+    public ResponseEntity<MedicoOutputDTO> cadastrar(@Valid @RequestBody MedicoInputDTO medicoInputDTO) {
+        Medico medico = medicoAssembler.toEntity(medicoInputDTO);
         Medico novoMedico = medicoService.cadastrarMedico(medico);
-        return ResponseEntity.ok(novoMedico);
+        return ResponseEntity.ok(medicoAssembler.toOutputDTO(novoMedico));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Medico> atualizar(@PathVariable Long id, @Valid @RequestBody Medico medico) {
+    public ResponseEntity<MedicoOutputDTO> atualizar(@PathVariable Long id, @Valid @RequestBody MedicoInputDTO medicoInputDTO) {
+        Medico medico = medicoAssembler.toEntity(medicoInputDTO);
         Medico medicoAtualizado = medicoService.atualizarMedico(id, medico);
-        return ResponseEntity.ok(medicoAtualizado);
+        return ResponseEntity.ok(medicoAssembler.toOutputDTO(medicoAtualizado));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Medico> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<MedicoOutputDTO> buscarPorId(@PathVariable Long id) {
         Medico medico = medicoService.buscarPorId(id);
-        return ResponseEntity.ok(medico);
+        return ResponseEntity.ok(medicoAssembler.toOutputDTO(medico));
     }
 
     @GetMapping
-    public ResponseEntity<List<Medico>> listarTodos() {
-        List<Medico> medicos = medicoService.listarTodos();
-        return ResponseEntity.ok(medicos);
+    public ResponseEntity<List<MedicoOutputDTO>> listarTodos() {
+        return ResponseEntity.ok(mapToOutputDTOList(medicoService.listarTodos()));
     }
 
     @GetMapping("/ativos")
-    public ResponseEntity<List<Medico>> listarAtivos() {
-        List<Medico> medicos = medicoService.listarAtivos();
-        return ResponseEntity.ok(medicos);
+    public ResponseEntity<List<MedicoOutputDTO>> listarAtivos() {
+        return ResponseEntity.ok(mapToOutputDTOList(medicoService.listarAtivos()));
     }
 
     @GetMapping("/desativados")
-    public ResponseEntity<List<Medico>> listarDesativados() {
-        List<Medico> medicos = medicoService.listarDesativados();
-        return ResponseEntity.ok(medicos);
+    public ResponseEntity<List<MedicoOutputDTO>> listarDesativados() {
+        return ResponseEntity.ok(mapToOutputDTOList(medicoService.listarDesativados()));
     }
 
     @DeleteMapping("/{id}")
@@ -59,21 +65,26 @@ public class MedicoController {
     }
 
     @GetMapping("/crm/{crm}")
-    public ResponseEntity<Medico> buscarPorCrm(@PathVariable String crm) {
+    public ResponseEntity<MedicoOutputDTO> buscarPorCrm(@PathVariable String crm) {
         return medicoService.buscarPorCrm(crm)
+                .map(medicoAssembler::toOutputDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/especialidade/{nomeEspecialidade}")
-    public ResponseEntity<List<Medico>> buscarPorEspecialidade(@PathVariable String nomeEspecialidade) {
-        List<Medico> medicos = medicoService.buscarPorEspecialidade(nomeEspecialidade);
-        return ResponseEntity.ok(medicos);
+    public ResponseEntity<List<MedicoOutputDTO>> buscarPorEspecialidade(@PathVariable String nomeEspecialidade) {
+        return ResponseEntity.ok(mapToOutputDTOList(medicoService.buscarPorEspecialidade(nomeEspecialidade)));
     }
 
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<List<Medico>> buscarPorNome(@PathVariable String nome) {
-        List<Medico> medicos = medicoService.buscarPorNome(nome);
-        return ResponseEntity.ok(medicos);
+    public ResponseEntity<List<MedicoOutputDTO>> buscarPorNome(@PathVariable String nome) {
+        return ResponseEntity.ok(mapToOutputDTOList(medicoService.buscarPorNome(nome)));
+    }
+
+    private List<MedicoOutputDTO> mapToOutputDTOList(List<Medico> medicos) {
+        return medicos.stream()
+                .map(medicoAssembler::toOutputDTO)
+                .collect(Collectors.toList());
     }
 }

@@ -1,5 +1,8 @@
 package br.com.projeto.saude_plus.api.controller;
 
+import br.com.projeto.saude_plus.api.dto.clinicaDTO.ClinicaInputDTO;
+import br.com.projeto.saude_plus.api.dto.clinicaDTO.ClinicaOutputDTO;
+import br.com.projeto.saude_plus.assembler.ClinicaAssembler;
 import br.com.projeto.saude_plus.domain.model.Clinica;
 import br.com.projeto.saude_plus.domain.service.ClinicaService;
 import jakarta.validation.Valid;
@@ -14,17 +17,23 @@ public class ClinicaController {
     @Autowired
     private ClinicaService clinicaService;
 
+    @Autowired
+    private ClinicaAssembler clinicaAssembler;
+
     @GetMapping("/{id}")
-    public ResponseEntity<Clinica> buscarClinica(@PathVariable Long id) {
+    public ResponseEntity<ClinicaOutputDTO> buscarClinica(@PathVariable Long id) {
         Clinica clinica = clinicaService.buscarClinica(id);
-        return ResponseEntity.ok(clinica);
+        return ResponseEntity.ok(clinicaAssembler.toOutputDTO(clinica));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Clinica> atualizarClinica(
+    public ResponseEntity<ClinicaOutputDTO> atualizarClinica(
             @PathVariable Long id,
-            @Valid @RequestBody Clinica dadosAtualizados) {
-        Clinica clinicaAtualizada = clinicaService.atualizarClinica(id, dadosAtualizados);
-        return ResponseEntity.ok(clinicaAtualizada);
+            @Valid @RequestBody ClinicaInputDTO clinicaInputDTO) {
+        Clinica clinicaAtualizada = clinicaService.atualizarClinica(
+                id,
+                clinicaAssembler.toEntity(clinicaInputDTO)
+        );
+        return ResponseEntity.ok(clinicaAssembler.toOutputDTO(clinicaAtualizada));
     }
 }
