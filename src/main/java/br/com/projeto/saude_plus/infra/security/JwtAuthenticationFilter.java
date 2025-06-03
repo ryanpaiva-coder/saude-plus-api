@@ -1,4 +1,4 @@
-package br.com.projeto.saude_plus.security;
+package br.com.projeto.saude_plus.infra.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

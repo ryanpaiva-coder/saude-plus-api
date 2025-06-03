@@ -1,4 +1,4 @@
-package br.com.projeto.saude_plus.config;
+package br.com.projeto.saude_plus.infra.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package br.com.projeto.saude_plus.domain.controller;
+package br.com.projeto.saude_plus.api.controller;
 
 import br.com.projeto.saude_plus.domain.model.Especialidade;
 import br.com.projeto.saude_plus.domain.service.EspecialidadeService;
