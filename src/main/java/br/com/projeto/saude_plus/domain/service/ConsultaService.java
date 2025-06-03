@@ -45,6 +45,10 @@ public class ConsultaService {
         return consultaRepository.save(consulta);
     }
 
+    public List<Consulta> listarTodas() {
+        return consultaRepository.findAll();
+    }
+
     public Consulta buscarPorId(Long id) {
         return consultaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Consulta não encontrada"));
