@@ -1,7 +1,13 @@
 package br.com.projeto.saude_plus.domain.service;
 
+import br.com.projeto.saude_plus.domain.model.Clinica;
 import br.com.projeto.saude_plus.domain.model.Medico;
+import br.com.projeto.saude_plus.domain.model.Role;
+import br.com.projeto.saude_plus.domain.repository.ClinicaRepository;
 import br.com.projeto.saude_plus.domain.repository.MedicoRepository;
+import br.com.projeto.saude_plus.domain.repository.RoleRepository;
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +20,25 @@ public class MedicoService {
     @Autowired
     private MedicoRepository medicoRepository;
 
+    @Autowired
+    private ClinicaRepository clinicaRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Transactional
     public Medico cadastrarMedico(Medico medico) {
         medico.setAtivo(true);
+
+        Clinica clinica = clinicaRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("Clínica não encontrada"));
+
+        medico.setClinica(clinica);
+
+        Role roleMedico = roleRepository.findByNome("MEDICO")
+                .orElseThrow(() -> new RuntimeException("Role MEDICO não encontrada"));
+        medico.setRole(roleMedico);
+
         return medicoRepository.save(medico);
     }
 

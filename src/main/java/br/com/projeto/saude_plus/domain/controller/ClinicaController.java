@@ -14,17 +14,17 @@ public class ClinicaController {
     @Autowired
     private ClinicaService clinicaService;
 
-    @GetMapping("/{cnpj}")
-    public ResponseEntity<Clinica> buscarClinica(@PathVariable String cnpj) {
-        Clinica clinica = clinicaService.buscarClinica(cnpj);
+    @GetMapping("/{id}")
+    public ResponseEntity<Clinica> buscarClinica(@PathVariable Long id) {
+        Clinica clinica = clinicaService.buscarClinica(id);
         return ResponseEntity.ok(clinica);
     }
 
-    @PutMapping("/{cnpj}")
+    @PutMapping("/{id}")
     public ResponseEntity<Clinica> atualizarClinica(
-            @PathVariable String cnpj,
+            @PathVariable Long id,
             @Valid @RequestBody Clinica dadosAtualizados) {
-        Clinica clinicaAtualizada = clinicaService.atualizarClinica(cnpj, dadosAtualizados);
+        Clinica clinicaAtualizada = clinicaService.atualizarClinica(id, dadosAtualizados);
         return ResponseEntity.ok(clinicaAtualizada);
     }
 }

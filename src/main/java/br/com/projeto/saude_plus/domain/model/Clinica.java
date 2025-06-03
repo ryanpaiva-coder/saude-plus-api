@@ -14,10 +14,13 @@ import lombok.*;
 public class Clinica {
 
     @Id
-    @NotBlank
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_clinica")
+    @EqualsAndHashCode.Include
+    private Long id;
+
     @Size(max = 14)
     @Column(name = "cnpj_clinica", length = 14)
-    @EqualsAndHashCode.Include
     private String cnpjClinica;
 
     @NotBlank
@@ -30,7 +33,7 @@ public class Clinica {
     private String telefone;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_endereco")
     private Endereco endereco;
 }

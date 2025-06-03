@@ -26,7 +26,7 @@ public class Medico extends Usuario {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "cnpj_clinica")
+    @JoinColumn(name = "id_clinica")
     private Clinica clinica;
 
     @NotNull

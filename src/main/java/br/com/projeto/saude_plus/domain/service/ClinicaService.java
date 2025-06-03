@@ -11,13 +11,13 @@ public class ClinicaService {
     @Autowired
     private ClinicaRepository clinicaRepository;
 
-    public Clinica buscarClinica(String cnpj) {
-        return clinicaRepository.findById(cnpj)
+    public Clinica buscarClinica(Long id) {
+        return clinicaRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Clínica não encontrada"));
     }
 
-    public Clinica atualizarClinica(String cnpj, Clinica dadosAtualizados) {
-        Clinica clinica = buscarClinica(cnpj);
+    public Clinica atualizarClinica(Long id, Clinica dadosAtualizados) {
+        Clinica clinica = buscarClinica(id);
         clinica.setNomeFantasia(dadosAtualizados.getNomeFantasia());
         clinica.setTelefone(dadosAtualizados.getTelefone());
         clinica.setEndereco(dadosAtualizados.getEndereco());
