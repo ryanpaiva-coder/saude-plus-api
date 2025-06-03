@@ -23,6 +23,12 @@ public class ConsultaController {
         return ResponseEntity.ok(novaConsulta);
     }
 
+    @GetMapping
+    public ResponseEntity<List<Consulta>> listarTodas() {
+        List<Consulta> consultas = consultaService.listarTodas();
+        return ResponseEntity.ok(consultas);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Consulta> buscarPorId(@PathVariable Long id) {
         Consulta consulta = consultaService.buscarPorId(id);
