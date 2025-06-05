@@ -26,7 +26,10 @@ public class MedicoController {
     @PostMapping
     public ResponseEntity<MedicoOutputDTO> cadastrar(@Valid @RequestBody MedicoInputDTO medicoInputDTO) {
         Medico medico = medicoAssembler.toEntity(medicoInputDTO);
-        Medico novoMedico = medicoService.cadastrarMedico(medico);
+        Medico novoMedico = medicoService.cadastrarMedico(
+            medico,
+            medicoInputDTO.getEspecialidade().getId()
+        );
         return ResponseEntity.ok(medicoAssembler.toOutputDTO(novoMedico));
     }
 

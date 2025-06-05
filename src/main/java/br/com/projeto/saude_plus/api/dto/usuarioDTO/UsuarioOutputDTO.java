@@ -1,5 +1,7 @@
 package br.com.projeto.saude_plus.api.dto.usuarioDTO;
 
+import java.time.LocalDateTime;
+
 import br.com.projeto.saude_plus.api.dto.enderecoDTO.EnderecoOutputDTO;
 import br.com.projeto.saude_plus.api.dto.roleDTO.RoleOutputDTO;
 import lombok.Getter;
@@ -28,5 +30,11 @@ public class UsuarioOutputDTO {
     private RoleOutputDTO role;
 
     private EnderecoOutputDTO endereco;
+
+    private LocalDateTime dataCriacao;
+
+    private LocalDateTime dataAtualizacao;
+    
+    private LocalDateTime dataDesativacao;
     
 }

@@ -8,6 +8,7 @@ import lombok.Setter;
 public class EspecialidadeOutputDTO {
 
     private Long id;
+    
     private String nome;
     
 }

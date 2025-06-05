@@ -1,5 +1,7 @@
 package br.com.projeto.saude_plus.api.dto.usuarioDTO;
 
+import java.time.LocalDate;
+
 import br.com.projeto.saude_plus.api.dto.enderecoDTO.EnderecoInputDTO;
 import br.com.projeto.saude_plus.domain.validation.CPF;
 import jakarta.validation.constraints.*;
@@ -34,7 +36,7 @@ public class UsuarioInputDTO {
     private String telefone;
 
     @NotNull
-    private String dataNascimento;
+    private LocalDate dataNascimento;
 
     @NotNull
     private EnderecoInputDTO endereco;

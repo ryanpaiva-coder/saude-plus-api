@@ -22,7 +22,7 @@ public class ClinicaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ClinicaOutputDTO> buscarClinica(@PathVariable Long id) {
-        Clinica clinica = clinicaService.buscarClinica(id);
+        Clinica clinica = clinicaService.buscarPorId(id);
         return ResponseEntity.ok(clinicaAssembler.toOutputDTO(clinica));
     }
 
@@ -30,7 +30,7 @@ public class ClinicaController {
     public ResponseEntity<ClinicaOutputDTO> atualizarClinica(
             @PathVariable Long id,
             @Valid @RequestBody ClinicaInputDTO clinicaInputDTO) {
-        Clinica clinicaAtualizada = clinicaService.atualizarClinica(
+        Clinica clinicaAtualizada = clinicaService.atualizar(
                 id,
                 clinicaAssembler.toEntity(clinicaInputDTO)
         );

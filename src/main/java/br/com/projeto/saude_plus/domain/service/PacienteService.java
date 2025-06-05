@@ -33,6 +33,7 @@ public class PacienteService {
         return pacienteRepository.save(paciente);
     }
 
+    @Transactional
     public Paciente atualizarPaciente(Long id, Paciente dadosAtualizados) {
         Paciente paciente = buscarPorId(id);
         paciente.setNome(dadosAtualizados.getNome());

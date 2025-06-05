@@ -10,9 +10,9 @@ import lombok.Setter;
 @Setter
 public class MedicoOutputDTO extends UsuarioOutputDTO {
 
-    private String crm;
-
     private Long id;
+    
+    private String crm;
 
     private ClinicaOutputDTO clinica;
 

@@ -5,13 +5,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import br.com.projeto.saude_plus.domain.model.Medico;
+import br.com.projeto.saude_plus.domain.model.Paciente;
 
 @Getter
 @Setter
 public class ConsultaInputDTO {
 
     @NotNull
-    private String inicio;
+    private LocalDateTime inicio;
 
     @DecimalMin("0.0")
     private BigDecimal valor;
@@ -21,9 +25,9 @@ public class ConsultaInputDTO {
     private String observacao;
 
     @NotNull
-    private Long idMedico;
+    private Medico medico;
 
     @NotNull
-    private Long idPaciente;
+    private Paciente paciente;
 
 }
