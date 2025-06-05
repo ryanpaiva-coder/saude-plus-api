@@ -15,10 +15,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Medico extends Usuario {
 
-    @Id
-    @Column(name = "id_medico")
-    private Long id; // Herda o id do Usuario
-
     @NotBlank
     @Size(max = 12)
     @Column(length = 12)

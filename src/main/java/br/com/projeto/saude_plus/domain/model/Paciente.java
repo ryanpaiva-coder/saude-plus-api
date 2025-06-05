@@ -13,10 +13,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Paciente extends Usuario {
 
-    @Id
-    @Column(name = "id_paciente")
-    private Long id;
-
     @Column(columnDefinition = "TEXT")
     @Size(max = 1000)
     private String descricao;
