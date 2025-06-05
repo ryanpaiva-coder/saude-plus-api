@@ -1,13 +1,14 @@
 package br.com.projeto.saude_plus.domain.service;
 
 import br.com.projeto.saude_plus.domain.model.Clinica;
+import br.com.projeto.saude_plus.domain.model.Especialidade;
 import br.com.projeto.saude_plus.domain.model.Medico;
 import br.com.projeto.saude_plus.domain.model.Role;
 import br.com.projeto.saude_plus.domain.repository.ClinicaRepository;
+import br.com.projeto.saude_plus.domain.repository.EspecialidadeRepository;
 import br.com.projeto.saude_plus.domain.repository.MedicoRepository;
 import br.com.projeto.saude_plus.domain.repository.RoleRepository;
 import jakarta.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,16 +25,24 @@ public class MedicoService {
     private ClinicaRepository clinicaRepository;
 
     @Autowired
+    private EspecialidadeRepository especialidadeRepository;
+
+    @Autowired
     private RoleRepository roleRepository;
 
     @Transactional
-    public Medico cadastrarMedico(Medico medico) {
+    public Medico cadastrarMedico(Medico medico, Long idEspecialidade) {
         medico.setAtivo(true);
 
-        Clinica clinica = clinicaRepository.findById(1L)
-                .orElseThrow(() -> new RuntimeException("Clínica não encontrada"));
-
+        Clinica clinica = clinicaRepository.findAll()
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Nenhuma clínica cadastrada"));
         medico.setClinica(clinica);
+
+        Especialidade especialidade = especialidadeRepository.findById(idEspecialidade)
+                .orElseThrow(() -> new RuntimeException("Especialidade não encontrada"));
+        medico.setEspecialidade(especialidade);
 
         Role roleMedico = roleRepository.findByNome("MEDICO")
                 .orElseThrow(() -> new RuntimeException("Role MEDICO não encontrada"));
@@ -42,6 +51,7 @@ public class MedicoService {
         return medicoRepository.save(medico);
     }
 
+    @Transactional
     public Medico atualizarMedico(Long id, Medico dadosAtualizados) {
         Medico medico = buscarPorId(id);
         medico.setNome(dadosAtualizados.getNome());
@@ -73,6 +83,7 @@ public class MedicoService {
         return medicoRepository.findByAtivoFalse();
     }
 
+    @Transactional
     public void desativarMedico(Long id) {
         Medico medico = buscarPorId(id);
         medico.setAtivo(false);

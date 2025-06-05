@@ -1,6 +1,10 @@
 package br.com.projeto.saude_plus.domain.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -83,5 +87,16 @@ public abstract class Usuario {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_endereco")
     private Endereco endereco;
+
+    @CreationTimestamp
+    @Column(name = "data_criacao", updatable = false)
+    private LocalDateTime dataCriacao;
+
+    @UpdateTimestamp
+    @Column(name = "data_atualizacao")
+    private LocalDateTime dataAtualizacao;
+
+    @Column(name = "data_exclusao")
+    private LocalDateTime dataDesativacao;
 
 }

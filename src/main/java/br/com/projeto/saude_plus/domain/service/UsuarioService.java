@@ -2,6 +2,8 @@ package br.com.projeto.saude_plus.domain.service;
 
 import br.com.projeto.saude_plus.domain.model.Usuario;
 import br.com.projeto.saude_plus.domain.repository.UsuarioRepository;
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ public class UsuarioService {
         return usuarioRepository.findAll().stream().findFirst();
     }
 
+    @Transactional
     public Usuario atualizarGerente(Long id, Usuario usuarioAtualizado) {
         Usuario gerente = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Gerente não encontrado"));
@@ -33,6 +36,7 @@ public class UsuarioService {
         return usuarioRepository.save(gerente);
     }
 
+    @Transactional
     public Usuario salvarGerente(Usuario gerente) {
         return usuarioRepository.save(gerente);
     }
