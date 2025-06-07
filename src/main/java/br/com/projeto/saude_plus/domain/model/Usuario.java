@@ -96,7 +96,7 @@ public abstract class Usuario {
     @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
 
-    @Column(name = "data_exclusao")
+    @Column(name = "data_desativacao")
     private LocalDateTime dataDesativacao;
 
 }
