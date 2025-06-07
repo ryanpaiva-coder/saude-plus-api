@@ -9,15 +9,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Medico")
+@Table(name = "medico")
 @Getter
 @Setter
 @NoArgsConstructor
 public class Medico extends Usuario {
-
-    @Id
-    @Column(name = "id_medico")
-    private Long id; // Herda o id do Usuario
 
     @NotBlank
     @Size(max = 12)
@@ -26,7 +22,7 @@ public class Medico extends Usuario {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "cnpj_clinica")
+    @JoinColumn(name = "id_clinica")
     private Clinica clinica;
 
     @NotNull
