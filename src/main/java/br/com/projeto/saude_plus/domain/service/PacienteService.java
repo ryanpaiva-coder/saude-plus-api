@@ -6,6 +6,7 @@ import br.com.projeto.saude_plus.domain.repository.PacienteRepository;
 import br.com.projeto.saude_plus.domain.repository.RoleRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,9 +22,22 @@ public class PacienteService {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Transactional
     public Paciente cadastrarPaciente(Paciente paciente) {
+        if (pacienteRepository.findByEmail(paciente.getEmail()).isPresent()) {
+            throw new RuntimeException("Já existe um paciente com este e-mail.");
+        }
+
+        if (pacienteRepository.findByCpf(paciente.getCpf()).isPresent()) {
+            throw new RuntimeException("Já existe um paciente com este CPF.");            
+        }
+
         paciente.setAtivo(true);
+
+        paciente.setSenha(passwordEncoder.encode(paciente.getSenha()));
 
         Role rolePaciente = roleRepository.findByNome("PACIENTE")
                 .orElseThrow(() -> new RuntimeException("Role PACIENTE não encontrada"));
