@@ -67,7 +67,7 @@ CREATE TABLE gerente (
     codigo_autorizacao VARCHAR(32) NOT NULL,
     data_inicio_gestao DATE NOT NULL,
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
-)
+);
 
 CREATE TABLE consulta (
     id_consulta INT PRIMARY KEY AUTO_INCREMENT,
