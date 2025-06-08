@@ -23,6 +23,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
     
+    // adicionado para corrigir um problemas, mas confirmar permanencia
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
