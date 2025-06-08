@@ -10,8 +10,8 @@ import java.util.Optional;
 
 public interface TokenRepository extends JpaRepository<Token, Long> {
 
-    @Query("SELECT t FROM Token t WHERE t.usuario = :usuario AND (t.expirado = false OR t.revogado = false)")
-    List<Token> findAllValidTokensByUsuario(Usuario usuario);
+    @Query("SELECT t FROM Token t WHERE t.usuario = :usuario AND t.expirado = false AND t.revogado = false")
+List<Token> findAllValidTokensByUsuario(Usuario usuario);
 
     Optional<Token> findByToken(String token);
 }
