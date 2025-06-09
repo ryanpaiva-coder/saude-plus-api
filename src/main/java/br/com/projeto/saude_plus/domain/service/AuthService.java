@@ -44,4 +44,14 @@ public class AuthService {
 
         return new AuthResponse(jwtToken);
     }
+
+    @Transactional
+    public void logout(String tokenJwt) {
+        Token token = tokenRepository.findByToken(tokenJwt)
+            .orElseThrow(() -> new RuntimeException("Token não encontrado"));
+
+        token.setExpirado(true);
+        token.setRevogado(true);
+        tokenRepository.save(token);
+    }
 }
