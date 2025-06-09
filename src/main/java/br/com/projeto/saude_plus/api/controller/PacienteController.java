@@ -6,6 +6,7 @@ import br.com.projeto.saude_plus.assembler.PacienteAssembler;
 import br.com.projeto.saude_plus.domain.model.Paciente;
 import br.com.projeto.saude_plus.domain.service.PacienteService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/pacientes")
 @RequiredArgsConstructor
