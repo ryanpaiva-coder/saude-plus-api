@@ -4,16 +4,17 @@ import br.com.projeto.saude_plus.api.dto.pacienteDTO.PacienteInputDTO;
 import br.com.projeto.saude_plus.api.dto.pacienteDTO.PacienteOutputDTO;
 import br.com.projeto.saude_plus.assembler.PacienteAssembler;
 import br.com.projeto.saude_plus.domain.model.Paciente;
-import br.com.projeto.saude_plus.domain.model.Usuario;
 import br.com.projeto.saude_plus.domain.service.PacienteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,10 +27,12 @@ import java.util.stream.Collectors;
 @Tag(name = "Paciente", description = "Endpoints relacionados ao paciente")
 public class PacienteController {
 
-    private final PacienteService pacienteService;
-    private final PacienteAssembler pacienteAssembler;
+    @Autowired
+    private PacienteService pacienteService;
 
-    @PreAuthorize("permitAll()")
+    @Autowired
+    private PacienteAssembler pacienteAssembler;
+
     @PostMapping
     public ResponseEntity<PacienteOutputDTO> cadastrar(@Valid @RequestBody PacienteInputDTO pacienteInputDTO) {
         Paciente paciente = pacienteAssembler.toEntity(pacienteInputDTO);
@@ -37,7 +40,6 @@ public class PacienteController {
         return ResponseEntity.ok(pacienteAssembler.toOutputDTO(novoPaciente));
     }
 
-    @PreAuthorize("hasRole('GERENTE')")
     @PutMapping("/{id}")
     public ResponseEntity<PacienteOutputDTO> atualizar(@PathVariable Long id, @Valid @RequestBody PacienteInputDTO pacienteInputDTO) {
         Paciente paciente = pacienteAssembler.toEntity(pacienteInputDTO);
@@ -45,42 +47,36 @@ public class PacienteController {
         return ResponseEntity.ok(pacienteAssembler.toOutputDTO(pacienteAtualizado));
     }
 
-    @PreAuthorize("hasRole('GERENTE')")
     @GetMapping("/{id}")
     public ResponseEntity<PacienteOutputDTO> buscarPorId(@PathVariable Long id) {
         Paciente paciente = pacienteService.buscarPorId(id);
         return ResponseEntity.ok(pacienteAssembler.toOutputDTO(paciente));
     }
 
-    @PreAuthorize("hasRole('GERENTE')")
     @GetMapping
     public ResponseEntity<List<PacienteOutputDTO>> listarTodos() {
         List<Paciente> pacientes = pacienteService.listarTodos();
         return ResponseEntity.ok(mapToOutputDTOList(pacientes));
     }
 
-    @PreAuthorize("hasRole('GERENTE')")
     @GetMapping("/ativos")
     public ResponseEntity<List<PacienteOutputDTO>> listarAtivos() {
         List<Paciente> pacientes = pacienteService.listarAtivos();
         return ResponseEntity.ok(mapToOutputDTOList(pacientes));
     }
 
-    @PreAuthorize("hasRole('GERENTE')")
     @GetMapping("/desativados")
     public ResponseEntity<List<PacienteOutputDTO>> listarDesativados() {
         List<Paciente> pacientes = pacienteService.listarDesativados();
         return ResponseEntity.ok(mapToOutputDTOList(pacientes));
     }
 
-    @PreAuthorize("hasRole('GERENTE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> desativar(@PathVariable Long id) {
         pacienteService.desativarPaciente(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('GERENTE')")
     @GetMapping("/email/{email}")
     public ResponseEntity<PacienteOutputDTO> buscarPorEmail(@PathVariable String email) {
         return pacienteService.buscarPorEmail(email)
@@ -89,7 +85,6 @@ public class PacienteController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PreAuthorize("hasRole('GERENTE')")
     @GetMapping("/cpf/{cpf}")
     public ResponseEntity<PacienteOutputDTO> buscarPorCpf(@PathVariable String cpf) {
         return pacienteService.buscarPorCpf(cpf)
@@ -98,20 +93,18 @@ public class PacienteController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PreAuthorize("hasRole('GERENTE')")
     @GetMapping("/nome/{nome}")
     public ResponseEntity<List<PacienteOutputDTO>> buscarPorNome(@PathVariable String nome) {
         List<Paciente> pacientes = pacienteService.buscarPorNome(nome);
         return ResponseEntity.ok(mapToOutputDTOList(pacientes));
     }
 
+    
     @PreAuthorize("hasRole('PACIENTE')")
     @GetMapping("/me")
     @Operation(summary = "Dados do paciente autenticado", description = "Retorna os dados do paciente atualmente autenticado via token JWT.")
-    public ResponseEntity<PacienteOutputDTO> getPacienteLogado(@AuthenticationPrincipal Usuario usuario) {
-        if (usuario == null || !(usuario instanceof Paciente paciente)) {
-            return ResponseEntity.status(401).build();
-        }
+    public ResponseEntity<PacienteOutputDTO> getPacienteLogado(HttpServletRequest request) {
+        Paciente paciente = (Paciente) request.getUserPrincipal();
         return ResponseEntity.ok(pacienteAssembler.toOutputDTO(paciente));
     }
 
