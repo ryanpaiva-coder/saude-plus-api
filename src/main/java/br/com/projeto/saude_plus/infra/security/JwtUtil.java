@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.UUID;
 
 @Component
 public class JwtUtil {
@@ -18,7 +17,8 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
-    public String generateToken(UUID userId, String email) {
+    // mudei o UUID para long, confirmar depois se permanecera assim
+    public String generateToken(Long userId, String email) {
         return Jwts.builder()
                 .setSubject(userId.toString())
                 .claim("email", email)

@@ -81,3 +81,12 @@ CREATE TABLE consulta (
     FOREIGN KEY (id_medico) REFERENCES medico(id_usuario),
     FOREIGN KEY (id_paciente) REFERENCES paciente(id_usuario)
 );
+
+CREATE TABLE tokens (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    token VARCHAR(512) NOT NULL,
+    revogado BOOLEAN NOT NULL,
+    expirado BOOLEAN NOT NULL,
+    usuario_id INT,
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id_usuario)
+);
