@@ -1,6 +1,7 @@
 package br.com.projeto.saude_plus.infra.security;
 
 import br.com.projeto.saude_plus.domain.model.Paciente;
+import br.com.projeto.saude_plus.domain.model.Token;
 import br.com.projeto.saude_plus.domain.repository.PacienteRepository;
 import br.com.projeto.saude_plus.domain.repository.TokenRepository;
 import jakarta.servlet.FilterChain;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -43,12 +45,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         email = jwtUtil.getEmailFromToken(token);
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            Optional<Token> tokenOptional = tokenRepository.findByToken(token);
+
+            if (tokenOptional.isEmpty()) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            Token tokenObj = tokenOptional.get();
+            boolean tokenValido = !tokenObj.isExpirado() && !tokenObj.isRevogado();
+
             Paciente paciente = pacienteRepository.findByEmail(email).orElse(null);
-
-            boolean tokenValido = tokenRepository.findByToken(token)
-                    .filter(t -> !t.isExpirado() && !t.isRevogado())
-                    .isPresent();
-
             if (paciente != null && jwtUtil.validateToken(token) && tokenValido) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         paciente, null, paciente.getAuthorities()
