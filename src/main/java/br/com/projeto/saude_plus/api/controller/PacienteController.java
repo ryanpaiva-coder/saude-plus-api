@@ -40,6 +40,7 @@ public class PacienteController {
         return ResponseEntity.ok(pacienteAssembler.toOutputDTO(novoPaciente));
     }
 
+    @PreAuthorize("hasRole('PACIENTE')")
     @PutMapping("/{id}")
     public ResponseEntity<PacienteOutputDTO> atualizar(@PathVariable Long id, @Valid @RequestBody PacienteInputDTO pacienteInputDTO) {
         Paciente paciente = pacienteAssembler.toEntity(pacienteInputDTO);
@@ -47,30 +48,35 @@ public class PacienteController {
         return ResponseEntity.ok(pacienteAssembler.toOutputDTO(pacienteAtualizado));
     }
 
+    @PreAuthorize("hasRole('PACIENTE')")
     @GetMapping("/{id}")
     public ResponseEntity<PacienteOutputDTO> buscarPorId(@PathVariable Long id) {
         Paciente paciente = pacienteService.buscarPorId(id);
         return ResponseEntity.ok(pacienteAssembler.toOutputDTO(paciente));
     }
 
+    @PreAuthorize("hasRole('PACIENTE')")
     @GetMapping
     public ResponseEntity<List<PacienteOutputDTO>> listarTodos() {
         List<Paciente> pacientes = pacienteService.listarTodos();
         return ResponseEntity.ok(mapToOutputDTOList(pacientes));
     }
 
+    @PreAuthorize("hasRole('PACIENTE')")
     @GetMapping("/ativos")
     public ResponseEntity<List<PacienteOutputDTO>> listarAtivos() {
         List<Paciente> pacientes = pacienteService.listarAtivos();
         return ResponseEntity.ok(mapToOutputDTOList(pacientes));
     }
 
+    @PreAuthorize("hasRole('PACIENTE')")
     @GetMapping("/desativados")
     public ResponseEntity<List<PacienteOutputDTO>> listarDesativados() {
         List<Paciente> pacientes = pacienteService.listarDesativados();
         return ResponseEntity.ok(mapToOutputDTOList(pacientes));
     }
 
+    @PreAuthorize("hasRole('PACIENTE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> desativar(@PathVariable Long id) {
         pacienteService.desativarPaciente(id);
