@@ -5,16 +5,15 @@ import br.com.projeto.saude_plus.api.dto.pacienteDTO.PacienteOutputDTO;
 import br.com.projeto.saude_plus.assembler.PacienteAssembler;
 import br.com.projeto.saude_plus.domain.model.Paciente;
 import br.com.projeto.saude_plus.domain.service.PacienteService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -105,12 +104,9 @@ public class PacienteController {
         return ResponseEntity.ok(mapToOutputDTOList(pacientes));
     }
 
-    
-    @PreAuthorize("hasRole('PACIENTE')")
     @GetMapping("/me")
-    @Operation(summary = "Dados do paciente autenticado", description = "Retorna os dados do paciente atualmente autenticado via token JWT.")
-    public ResponseEntity<PacienteOutputDTO> getPacienteLogado(HttpServletRequest request) {
-        Paciente paciente = (Paciente) request.getUserPrincipal();
+    @PreAuthorize("hasRole('PACIENTE')")
+    public ResponseEntity<PacienteOutputDTO> getPacienteLogado(@AuthenticationPrincipal Paciente paciente) {
         return ResponseEntity.ok(pacienteAssembler.toOutputDTO(paciente));
     }
 
