@@ -10,6 +10,7 @@ import br.com.projeto.saude_plus.domain.repository.MedicoRepository;
 import br.com.projeto.saude_plus.domain.repository.RoleRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,12 +34,16 @@ public class MedicoService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Transactional
     public Medico cadastrarMedico(Medico medico, Long idEspecialidade) {
         medico.setAtivo(true);
         medico.setClinica(buscarPrimeiraClinica());
         medico.setEspecialidade(buscarEspecialidadePorId(idEspecialidade));
         medico.setRole(buscarRoleMedico());
+        medico.setSenha(passwordEncoder.encode(medico.getSenha()));
 
         Medico medicoSalvo = medicoRepository.save(medico);
         emailService.enviarEmailBoasVindas(medicoSalvo);
