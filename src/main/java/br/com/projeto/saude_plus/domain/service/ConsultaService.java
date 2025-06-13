@@ -16,6 +16,9 @@ public class ConsultaService {
     @Autowired
     private ConsultaRepository consultaRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     @Transactional
     public Consulta agendarConsulta(Consulta consulta) {
         validarHorarioAntecedencia(consulta.getInicio());
@@ -23,7 +26,22 @@ public class ConsultaService {
         validarConflitoConsulta(consulta);
 
         consulta.setStatus(StatusConsulta.AGENDADA);
-        return consultaRepository.save(consulta);
+        Consulta consultaSalva = consultaRepository.save(consulta);
+
+        enviarEmailAgendamento(consultaSalva);
+
+        return consultaSalva;
+    }
+
+    @Transactional
+    public Consulta desmarcarConsulta(Long id) {
+        Consulta consulta = buscarPorId(id);
+        consulta.setStatus(StatusConsulta.DESMARCADA);
+        Consulta consultaAtualizada = consultaRepository.save(consulta);
+
+        enviarEmailCancelamento(consultaAtualizada);
+
+        return consultaAtualizada;
     }
 
     public List<Consulta> listarTodas() {
@@ -47,19 +65,52 @@ public class ConsultaService {
         return consultaRepository.findByStatus(status);
     }
 
-    @Transactional
-    public Consulta desmarcarConsulta(Long id) {
-        Consulta consulta = buscarPorId(id);
-        consulta.setStatus(StatusConsulta.DESMARCADA);
-        return consultaRepository.save(consulta);
-    }
-
     public List<Consulta> listarConsultasFuturasMedico(Long idMedico) {
         return consultaRepository.findByMedicoIdAndInicioAfter(idMedico, LocalDateTime.now());
     }
 
     public List<Consulta> listarConsultasFuturasPaciente(Long idPaciente) {
         return consultaRepository.findByPacienteIdAndInicioAfter(idPaciente, LocalDateTime.now());
+    }
+
+    private void enviarEmailAgendamento(Consulta consulta) {
+        emailService.enviarEmailConsultaAgendadaPaciente(
+                consulta.getPaciente().getEmail(),
+                consulta.getPaciente().getNome(),
+                consulta.getInicio().toLocalDate().toString(),
+                consulta.getInicio().toLocalTime().toString(),
+                consulta.getMedico().getNome(),
+                consulta.getMedico().getEspecialidade().getNome()
+        );
+
+        emailService.enviarEmailConsultaAgendadaMedico(
+                consulta.getMedico().getEmail(),
+                consulta.getMedico().getNome(),
+                consulta.getInicio().toLocalDate().toString(),
+                consulta.getInicio().toLocalTime().toString(),
+                consulta.getPaciente().getNome(),
+                consulta.getPaciente().getTelefone()
+        );
+    }
+
+    private void enviarEmailCancelamento(Consulta consulta) {
+        emailService.enviarEmailConsultaCanceladaPaciente(
+                consulta.getPaciente().getEmail(),
+                consulta.getPaciente().getNome(),
+                consulta.getInicio().toLocalDate().toString(),
+                consulta.getInicio().toLocalTime().toString(),
+                consulta.getMedico().getNome(),
+                consulta.getMedico().getEspecialidade().getNome()
+        );
+
+        emailService.enviarEmailConsultaCanceladaMedico(
+                consulta.getMedico().getEmail(),
+                consulta.getMedico().getNome(),
+                consulta.getInicio().toLocalDate().toString(),
+                consulta.getInicio().toLocalTime().toString(),
+                consulta.getPaciente().getNome(),
+                consulta.getPaciente().getTelefone()
+        );
     }
 
     private void validarHorarioAntecedencia(LocalDateTime inicio) {

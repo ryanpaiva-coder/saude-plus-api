@@ -30,40 +30,34 @@ public class MedicoService {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     @Transactional
     public Medico cadastrarMedico(Medico medico, Long idEspecialidade) {
         medico.setAtivo(true);
+        medico.setClinica(buscarPrimeiraClinica());
+        medico.setEspecialidade(buscarEspecialidadePorId(idEspecialidade));
+        medico.setRole(buscarRoleMedico());
 
-        Clinica clinica = clinicaRepository.findAll()
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Nenhuma clínica cadastrada"));
-        medico.setClinica(clinica);
-
-        Especialidade especialidade = especialidadeRepository.findById(idEspecialidade)
-                .orElseThrow(() -> new RuntimeException("Especialidade não encontrada"));
-        medico.setEspecialidade(especialidade);
-
-        Role roleMedico = roleRepository.findByNome("MEDICO")
-                .orElseThrow(() -> new RuntimeException("Role MEDICO não encontrada"));
-        medico.setRole(roleMedico);
-
-        return medicoRepository.save(medico);
+        Medico medicoSalvo = medicoRepository.save(medico);
+        emailService.enviarEmailBoasVindas(medicoSalvo);
+        return medicoSalvo;
     }
 
     @Transactional
     public Medico atualizarMedico(Long id, Medico dadosAtualizados) {
         Medico medico = buscarPorId(id);
-        medico.setNome(dadosAtualizados.getNome());
-        medico.setCrm(dadosAtualizados.getCrm());
-        medico.setEspecialidade(dadosAtualizados.getEspecialidade());
-        medico.setClinica(dadosAtualizados.getClinica());
-        medico.setEmail(dadosAtualizados.getEmail());
-        medico.setTelefone(dadosAtualizados.getTelefone());
-        medico.setSexo(dadosAtualizados.getSexo());
-        medico.setDataNascimento(dadosAtualizados.getDataNascimento());
-        medico.setEndereco(dadosAtualizados.getEndereco());
+        atualizarDadosMedico(medico, dadosAtualizados);
         return medicoRepository.save(medico);
+    }
+
+    @Transactional
+    public void desativarMedico(Long id) {
+        Medico medico = buscarPorId(id);
+        medico.setAtivo(false);
+        medicoRepository.save(medico);
+        emailService.enviarEmailDesativamento(medico);
     }
 
     public Medico buscarPorId(Long id) {
@@ -83,13 +77,6 @@ public class MedicoService {
         return medicoRepository.findByAtivoFalse();
     }
 
-    @Transactional
-    public void desativarMedico(Long id) {
-        Medico medico = buscarPorId(id);
-        medico.setAtivo(false);
-        medicoRepository.save(medico);
-    }
-
     public Optional<Medico> buscarPorCrm(String crm) {
         return medicoRepository.findByCrm(crm);
     }
@@ -100,5 +87,34 @@ public class MedicoService {
 
     public List<Medico> buscarPorNome(String nome) {
         return medicoRepository.findByNomeContainingIgnoreCase(nome);
+    }
+
+    private Clinica buscarPrimeiraClinica() {
+        return clinicaRepository.findAll()
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Nenhuma clínica cadastrada"));
+    }
+
+    private Especialidade buscarEspecialidadePorId(Long idEspecialidade) {
+        return especialidadeRepository.findById(idEspecialidade)
+                .orElseThrow(() -> new RuntimeException("Especialidade não encontrada"));
+    }
+
+    private Role buscarRoleMedico() {
+        return roleRepository.findByNome("MEDICO")
+                .orElseThrow(() -> new RuntimeException("Role MEDICO não encontrada"));
+    }
+
+    private void atualizarDadosMedico(Medico medico, Medico dadosAtualizados) {
+        medico.setNome(dadosAtualizados.getNome());
+        medico.setCrm(dadosAtualizados.getCrm());
+        medico.setEspecialidade(dadosAtualizados.getEspecialidade());
+        medico.setClinica(dadosAtualizados.getClinica());
+        medico.setEmail(dadosAtualizados.getEmail());
+        medico.setTelefone(dadosAtualizados.getTelefone());
+        medico.setSexo(dadosAtualizados.getSexo());
+        medico.setDataNascimento(dadosAtualizados.getDataNascimento());
+        medico.setEndereco(dadosAtualizados.getEndereco());
     }
 }
