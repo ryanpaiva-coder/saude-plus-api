@@ -11,7 +11,7 @@
   Autores:
     - Alexandre Henrique Fernandes da Silva <alexandrehenriquefdes@gmail.com>
     - Eric Rafael da Silva Souza <rafael.souza29184@gmail.com>
-    - João Victor Santos da Costa
+    - João Victor Santos da Costa <joaovictorsdc07@gmail.com>
     - Ryan Pedro da Silva Paiva <paiva.code@gmail.com>
     - Vitório Honorato de Freitas Pereira
   Prof.: José Erico Gomes da Silva
