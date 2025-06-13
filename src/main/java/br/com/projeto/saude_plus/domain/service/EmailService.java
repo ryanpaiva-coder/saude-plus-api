@@ -156,6 +156,6 @@ public class EmailService {
 
     private String carregarTemplate(String caminhoTemplate, String nomePaciente) throws Exception {
         String conteudo = new String(Files.readAllBytes(Paths.get(caminhoTemplate)), StandardCharsets.UTF_8);
-        return conteudo.replace("@nomedapessoa", nomePaciente);
+        return conteudo.replace("@nomepessoa", nomePaciente);
     }
 }
