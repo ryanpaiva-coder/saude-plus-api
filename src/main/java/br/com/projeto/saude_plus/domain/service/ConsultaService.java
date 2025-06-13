@@ -2,7 +2,11 @@ package br.com.projeto.saude_plus.domain.service;
 
 import br.com.projeto.saude_plus.domain.enums.StatusConsulta;
 import br.com.projeto.saude_plus.domain.model.Consulta;
+import br.com.projeto.saude_plus.domain.model.Medico;
+import br.com.projeto.saude_plus.domain.model.Paciente;
 import br.com.projeto.saude_plus.domain.repository.ConsultaRepository;
+import br.com.projeto.saude_plus.domain.repository.MedicoRepository;
+import br.com.projeto.saude_plus.domain.repository.PacienteRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,27 +23,38 @@ public class ConsultaService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private MedicoRepository medicoRepository;
+
+    @Autowired
+    private PacienteRepository pacienteRepository;
+
     @Transactional
     public Consulta agendarConsulta(Consulta consulta) {
-        validarHorarioAntecedencia(consulta.getInicio());
-        validarHorarioFuncionamento(consulta.getInicio());
-        validarConflitoConsulta(consulta);
+        validarAgendamento(consulta);
 
+        Medico medico = buscarMedicoPorId(consulta.getMedico().getId());
+        Paciente paciente = buscarPacientePorId(consulta.getPaciente().getId());
+
+        consulta.setMedico(medico);
+        consulta.setPaciente(paciente);
         consulta.setStatus(StatusConsulta.AGENDADA);
+
         Consulta consultaSalva = consultaRepository.save(consulta);
 
-        enviarEmailAgendamento(consultaSalva);
+        notificarAgendamento(consultaSalva);
 
         return consultaSalva;
     }
 
     @Transactional
     public Consulta desmarcarConsulta(Long id) {
-        Consulta consulta = buscarPorId(id);
+        Consulta consulta = buscarConsultaPorId(id);
         consulta.setStatus(StatusConsulta.DESMARCADA);
+
         Consulta consultaAtualizada = consultaRepository.save(consulta);
 
-        enviarEmailCancelamento(consultaAtualizada);
+        notificarCancelamento(consultaAtualizada);
 
         return consultaAtualizada;
     }
@@ -48,9 +63,9 @@ public class ConsultaService {
         return consultaRepository.findAll();
     }
 
-    public Consulta buscarPorId(Long id) {
+    public Consulta buscarConsultaPorId(Long id) {
         return consultaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Consulta não encontrada"));
+                .orElseThrow(() -> new RuntimeException("Consulta não encontrada para o id: " + id));
     }
 
     public List<Consulta> listarPorMedico(Long idMedico) {
@@ -73,7 +88,23 @@ public class ConsultaService {
         return consultaRepository.findByPacienteIdAndInicioAfter(idPaciente, LocalDateTime.now());
     }
 
-    private void enviarEmailAgendamento(Consulta consulta) {
+    private void validarAgendamento(Consulta consulta) {
+        validarHorarioAntecedencia(consulta.getInicio());
+        validarHorarioFuncionamento(consulta.getInicio());
+        validarConflitoConsulta(consulta);
+    }
+
+    private Medico buscarMedicoPorId(Long id) {
+        return medicoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Médico não encontrado para o id: " + id));
+    }
+
+    private Paciente buscarPacientePorId(Long id) {
+        return pacienteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado para o id: " + id));
+    }
+
+    private void notificarAgendamento(Consulta consulta) {
         emailService.enviarEmailConsultaAgendadaPaciente(
                 consulta.getPaciente().getEmail(),
                 consulta.getPaciente().getNome(),
@@ -93,7 +124,7 @@ public class ConsultaService {
         );
     }
 
-    private void enviarEmailCancelamento(Consulta consulta) {
+    private void notificarCancelamento(Consulta consulta) {
         emailService.enviarEmailConsultaCanceladaPaciente(
                 consulta.getPaciente().getEmail(),
                 consulta.getPaciente().getNome(),

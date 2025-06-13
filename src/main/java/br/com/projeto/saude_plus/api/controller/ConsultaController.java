@@ -39,7 +39,7 @@ public class ConsultaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ConsultaOutputDTO> buscarPorId(@PathVariable Long id) {
-        Consulta consulta = consultaService.buscarPorId(id);
+        Consulta consulta = consultaService.buscarConsultaPorId(id);
         return ResponseEntity.ok(consultaAssembler.toOutputDTO(consulta));
     }
 
