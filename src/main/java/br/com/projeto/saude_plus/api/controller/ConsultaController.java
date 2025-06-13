@@ -2,6 +2,7 @@ package br.com.projeto.saude_plus.api.controller;
 
 import br.com.projeto.saude_plus.api.dto.consultaDTO.ConsultaInputDTO;
 import br.com.projeto.saude_plus.api.dto.consultaDTO.ConsultaOutputDTO;
+import br.com.projeto.saude_plus.api.dto.consultaDTO.JustificativaCancelamentoDTO;
 import br.com.projeto.saude_plus.assembler.ConsultaAssembler;
 import br.com.projeto.saude_plus.domain.enums.StatusConsulta;
 import br.com.projeto.saude_plus.domain.model.Consulta;
@@ -61,6 +62,14 @@ public class ConsultaController {
     @PutMapping("/{id}/desmarcar")
     public ResponseEntity<ConsultaOutputDTO> desmarcarConsulta(@PathVariable Long id) {
         Consulta consulta = consultaService.desmarcarConsulta(id);
+        return ResponseEntity.ok(consultaAssembler.toOutputDTO(consulta));
+    }
+
+    @PutMapping("/{id}/cancelar-medico")
+    public ResponseEntity<ConsultaOutputDTO> cancelarConsultaPorMedico(
+            @PathVariable Long id,
+            @Valid @RequestBody JustificativaCancelamentoDTO dto) {
+        Consulta consulta = consultaService.cancelarConsultaPorMedico(id, dto.getJustificativa());
         return ResponseEntity.ok(consultaAssembler.toOutputDTO(consulta));
     }
 

@@ -59,6 +59,22 @@ public class ConsultaService {
         return consultaAtualizada;
     }
 
+    @Transactional
+    public Consulta cancelarConsultaPorMedico(Long id, String justificativa) {
+        if (justificativa == null || justificativa.trim().isEmpty()) {
+            throw new RuntimeException("A justificativa do cancelamento é obrigatória.");
+        }
+        Consulta consulta = buscarConsultaPorId(id);
+        consulta.setStatus(StatusConsulta.DESMARCADA);
+        consulta.setJustificativaCancelamento(justificativa);
+
+        Consulta consultaAtualizada = consultaRepository.save(consulta);
+
+        notificarCancelamento(consultaAtualizada);
+
+        return consultaAtualizada;
+    }
+
     public List<Consulta> listarTodas() {
         return consultaRepository.findAll();
     }
