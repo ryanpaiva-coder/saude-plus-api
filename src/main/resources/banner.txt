@@ -1,0 +1,19 @@
+   _____                 _            
+  / ____|               | |       _   
+ | (___   __ _ _   _  __| | ___ _| |_ 
+  \___ \ / _` | | | |/ _` |/ _ \_   _|
+  ____) | (_| | |_| | (_| |  __/ |_|  
+ |_____/ \__,_|\__,_|\__,_|\___|      
+
+----------------------------------------
+  Universidade Potiguar - UNP
+  Modelagem de Software
+  Autores:
+    - Alexandre Henrique Fernandes da Silva <alexandrehenriquefdes@gmail.com>
+    - Eric Rafael da Silva Souza <rafael.souza29184@gmail.com>
+    - João Victor Santos da Costa <joaovictorsdc07@gmail.com>
+    - Ryan Pedro da Silva Paiva <paiva.code@gmail.com>
+    - Vitório Honorato de Freitas Pereira <vitoriohonorato166@gmail.com>
+  Prof.: José Erico Gomes da Silva
+  Data: Junho/2025
+----------------------------------------

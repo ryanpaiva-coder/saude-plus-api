@@ -78,6 +78,7 @@ CREATE TABLE consulta (
     id_medico INT,
     id_paciente INT,
     status VARCHAR(20) NOT NULL DEFAULT 'AGENDADA',
+    justificativa_cancelamento TEXT,
     FOREIGN KEY (id_medico) REFERENCES medico(id_usuario),
     FOREIGN KEY (id_paciente) REFERENCES paciente(id_usuario)
 );
