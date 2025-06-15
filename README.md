@@ -1,4 +1,4 @@
-<h1 align="center" style="font-weight: bold;">Saude Plus API 💻</h1>
+<h1 align="center" style="font-weight: bold;">Saúde Plus API 💻</h1>
 
 <p align="center">
  <a href="#descricao">Descrição</a> • 
