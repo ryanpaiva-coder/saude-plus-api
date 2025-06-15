@@ -17,7 +17,9 @@
 
 <h2 id="descricao">📄 Descrição</h2>
 
-O Saúde+ é um sistema que moderniza o agendamento de consultas, eliminando a dependência de filas, telefonemas e anotações manuais. A plataforma permite que pacientes marquem e cancelem atendimentos de forma rápida, com confirmação imediata por e-mail.
+O Saúde+ é um sistema que moderniza o agendamento de consultas, eliminando a dependência de filas, telefonemas e anotações manuais.
+
+A plataforma permite que pacientes marquem e cancelem atendimentos de forma rápida, com confirmação imediata por e-mail.
 
 Para os médicos, o sistema centraliza todo o histórico de agendamentos em um painel único, simplificando a gestão da agenda e a comunicação com os pacientes.
 
