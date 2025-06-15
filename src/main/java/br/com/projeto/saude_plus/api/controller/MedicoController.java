@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,7 @@ public class MedicoController {
     private MedicoAssembler medicoAssembler;
 
     @Operation(summary = "Cadastrar novo médico", description = "Cria um novo médico no sistema")
+    @PreAuthorize("hasRole('GERENTE')")
     @PostMapping
     public ResponseEntity<MedicoOutputDTO> cadastrar(
             @Valid @RequestBody MedicoInputDTO medicoInputDTO) {
@@ -40,6 +42,7 @@ public class MedicoController {
     }
 
     @Operation(summary = "Atualizar médico existente", description = "Atualiza os dados de um médico pelo ID")
+    @PreAuthorize("hasRole('GERENTE')")
     @PutMapping("/{id}")
     public ResponseEntity<MedicoOutputDTO> atualizar(
             @Parameter(description = "ID do médico") @PathVariable Long id,
@@ -58,6 +61,7 @@ public class MedicoController {
     }
 
     @Operation(summary = "Listar todos os médicos", description = "Retorna uma lista com todos os médicos")
+    @PreAuthorize("hasRole('GERENTE')")
     @GetMapping
     public ResponseEntity<List<MedicoOutputDTO>> listarTodos() {
         return ResponseEntity.ok(mapToOutputDTOList(medicoService.listarTodos()));
@@ -70,12 +74,14 @@ public class MedicoController {
     }
 
     @Operation(summary = "Listar médicos desativados", description = "Retorna uma lista de médicos desativados")
+    @PreAuthorize("hasRole('GERENTE')")
     @GetMapping("/desativados")
     public ResponseEntity<List<MedicoOutputDTO>> listarDesativados() {
         return ResponseEntity.ok(mapToOutputDTOList(medicoService.listarDesativados()));
     }
 
     @Operation(summary = "Desativar médico por ID", description = "Desativa um médico pelo ID")
+    @PreAuthorize("hasRole('GERENTE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> desativar(
             @Parameter(description = "ID do médico") @PathVariable Long id) {
