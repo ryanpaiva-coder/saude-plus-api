@@ -18,10 +18,11 @@ public class JwtUtil {
     }
 
     // mudei o UUID para long, confirmar depois se permanecera assim
-    public String generateToken(Long userId, String email) {
+    public String generateToken(Long userId, String email, String role) {
         return Jwts.builder()
                 .setSubject(userId.toString())
                 .claim("email", email)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)

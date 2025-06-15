@@ -1,9 +1,8 @@
 package br.com.projeto.saude_plus.infra.security;
 
-import br.com.projeto.saude_plus.domain.model.Paciente;
-import br.com.projeto.saude_plus.domain.model.Token;
-import br.com.projeto.saude_plus.domain.repository.PacienteRepository;
+import br.com.projeto.saude_plus.domain.model.Usuario;
 import br.com.projeto.saude_plus.domain.repository.TokenRepository;
+import br.com.projeto.saude_plus.domain.repository.UsuarioRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,55 +15,73 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final PacienteRepository pacienteRepository;
     private final TokenRepository tokenRepository;
+    private final UsuarioRepository usuarioRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain filterChain
+    ) throws ServletException, IOException {
 
-        final String authHeader = request.getHeader("Authorization");
-        final String token;
-        final String email;
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (isPublicEndpoint(request)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        token = authHeader.substring(7);
-        email = jwtUtil.getEmailFromToken(token);
+        String token = extractToken(request);
+        if (token == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            Optional<Token> tokenOptional = tokenRepository.findByToken(token);
+        String email = jwtUtil.getEmailFromToken(token);
 
-            if (tokenOptional.isEmpty()) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-            Token tokenObj = tokenOptional.get();
-            boolean tokenValido = !tokenObj.isExpirado() && !tokenObj.isRevogado();
-
-            Paciente paciente = pacienteRepository.findByEmail(email).orElse(null);
-            if (paciente != null && jwtUtil.validateToken(token) && tokenValido) {
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        paciente, null, paciente.getAuthorities()
-                );
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
+        if (shouldAuthenticate(email)) {
+            authenticateUser(token, email, request);
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private boolean isPublicEndpoint(HttpServletRequest request) {
+        String path = request.getServletPath();
+        String method = request.getMethod();
+        return (path.equals("/api/pacientes") && method.equals("POST")) || path.startsWith("/api/auth");
+    }
+
+    private String extractToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return null;
+        }
+        return authHeader.substring(7);
+    }
+
+    private boolean shouldAuthenticate(String email) {
+        return email != null && SecurityContextHolder.getContext().getAuthentication() == null;
+    }
+
+    private void authenticateUser(String token, String email, HttpServletRequest request) {
+        Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
+
+        boolean tokenValido = tokenRepository.findByToken(token)
+                .filter(t -> !t.isExpirado() && !t.isRevogado())
+                .isPresent();
+
+        if (usuario != null && jwtUtil.validateToken(token) && tokenValido) {
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    usuario, null, usuario.getAuthorities()
+            );
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
     }
 }

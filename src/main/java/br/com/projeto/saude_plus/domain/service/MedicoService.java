@@ -29,21 +29,21 @@ public class MedicoService {
     private EspecialidadeRepository especialidadeRepository;
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private RoleRepository roleRepository;
 
     @Autowired
     private EmailService emailService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @Transactional
     public Medico cadastrarMedico(Medico medico, Long idEspecialidade) {
         medico.setAtivo(true);
+        medico.setSenha(codificarSenha(medico.getSenha()));
         medico.setClinica(buscarPrimeiraClinica());
         medico.setEspecialidade(buscarEspecialidadePorId(idEspecialidade));
         medico.setRole(buscarRoleMedico());
-        medico.setSenha(passwordEncoder.encode(medico.getSenha()));
 
         Medico medicoSalvo = medicoRepository.save(medico);
         emailService.enviarEmailBoasVindas(medicoSalvo);
@@ -67,7 +67,7 @@ public class MedicoService {
 
     public Medico buscarPorId(Long id) {
         return medicoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Médico não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Médico não encontrado para o id: " + id));
     }
 
     public List<Medico> listarTodos() {
@@ -94,6 +94,10 @@ public class MedicoService {
         return medicoRepository.findByNomeContainingIgnoreCase(nome);
     }
 
+    private String codificarSenha(String senha) {
+        return passwordEncoder.encode(senha);
+    }
+
     private Clinica buscarPrimeiraClinica() {
         return clinicaRepository.findAll()
                 .stream()
@@ -103,7 +107,7 @@ public class MedicoService {
 
     private Especialidade buscarEspecialidadePorId(Long idEspecialidade) {
         return especialidadeRepository.findById(idEspecialidade)
-                .orElseThrow(() -> new RuntimeException("Especialidade não encontrada"));
+                .orElseThrow(() -> new RuntimeException("Especialidade não encontrada para o id: " + idEspecialidade));
     }
 
     private Role buscarRoleMedico() {

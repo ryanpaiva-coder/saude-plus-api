@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import br.com.projeto.saude_plus.domain.validation.CPF;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -51,15 +52,15 @@ public abstract class Usuario implements UserDetails {
     @Column(nullable = false, length = 64)
     private String nome;
 
+    @Column(unique = true, nullable = false, length = 11)
     @NotBlank
     @Size(min = 11, max = 11)
-    @Column(nullable = false, unique = true, length = 11)
+    @CPF
     private String cpf;
 
+    @Column(unique = true, nullable = false)
     @NotBlank
     @Email
-    @Size(max = 255)
-    @Column(nullable = false, unique = true, length = 255)
     private String email;
 
     @NotBlank
