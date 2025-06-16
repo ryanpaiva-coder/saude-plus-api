@@ -54,7 +54,7 @@ public class PacienteController {
     }
 
     @Operation(summary = "Buscar paciente por ID", description = "Retorna os dados de um paciente pelo ID")
-    @PreAuthorize("hasRole('PACIENTE')")
+    @PreAuthorize("hasRole('GERENTE')")
     @GetMapping("/{id}")
     public ResponseEntity<PacienteOutputDTO> buscarPorId(
             @Parameter(description = "ID do paciente") @PathVariable Long id) {
@@ -63,7 +63,7 @@ public class PacienteController {
     }
 
     @Operation(summary = "Listar todos os pacientes", description = "Retorna uma lista com todos os pacientes")
-    @PreAuthorize("hasRole('PACIENTE')")
+    @PreAuthorize("hasRole('GERENTE')")
     @GetMapping
     public ResponseEntity<List<PacienteOutputDTO>> listarTodos() {
         List<Paciente> pacientes = pacienteService.listarTodos();
@@ -71,7 +71,7 @@ public class PacienteController {
     }
 
     @Operation(summary = "Listar pacientes ativos", description = "Retorna uma lista de pacientes ativos")
-    @PreAuthorize("hasRole('PACIENTE')")
+    @PreAuthorize("hasRole('GERENTE')")
     @GetMapping("/ativos")
     public ResponseEntity<List<PacienteOutputDTO>> listarAtivos() {
         List<Paciente> pacientes = pacienteService.listarAtivos();
@@ -79,7 +79,7 @@ public class PacienteController {
     }
 
     @Operation(summary = "Listar pacientes desativados", description = "Retorna uma lista de pacientes desativados")
-    @PreAuthorize("hasRole('PACIENTE')")
+    @PreAuthorize("hasRole('GERENTE')")
     @GetMapping("/desativados")
     public ResponseEntity<List<PacienteOutputDTO>> listarDesativados() {
         List<Paciente> pacientes = pacienteService.listarDesativados();
