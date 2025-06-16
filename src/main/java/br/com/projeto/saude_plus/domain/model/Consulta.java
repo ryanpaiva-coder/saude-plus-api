@@ -52,4 +52,7 @@ public class Consulta {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private StatusConsulta status = StatusConsulta.AGENDADA;
+
+    @Column(name = "justificativa_cancelamento", columnDefinition = "TEXT")
+    private String justificativaCancelamento;
 }

@@ -2,7 +2,11 @@ package br.com.projeto.saude_plus.domain.service;
 
 import br.com.projeto.saude_plus.domain.enums.StatusConsulta;
 import br.com.projeto.saude_plus.domain.model.Consulta;
+import br.com.projeto.saude_plus.domain.model.Medico;
+import br.com.projeto.saude_plus.domain.model.Paciente;
 import br.com.projeto.saude_plus.domain.repository.ConsultaRepository;
+import br.com.projeto.saude_plus.domain.repository.MedicoRepository;
+import br.com.projeto.saude_plus.domain.repository.PacienteRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,23 +20,76 @@ public class ConsultaService {
     @Autowired
     private ConsultaRepository consultaRepository;
 
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private MedicoRepository medicoRepository;
+
+    @Autowired
+    private PacienteRepository pacienteRepository;
+
     @Transactional
     public Consulta agendarConsulta(Consulta consulta) {
-        validarHorarioAntecedencia(consulta.getInicio());
-        validarHorarioFuncionamento(consulta.getInicio());
-        validarConflitoConsulta(consulta);
+        validarAgendamento(consulta);
 
+        Medico medico = buscarMedicoPorId(consulta.getMedico().getId());
+        Paciente paciente = buscarPacientePorId(consulta.getPaciente().getId());
+
+        consulta.setMedico(medico);
+        consulta.setPaciente(paciente);
         consulta.setStatus(StatusConsulta.AGENDADA);
-        return consultaRepository.save(consulta);
+
+        Consulta consultaSalva = consultaRepository.save(consulta);
+
+        // notificarAgendamento(consultaSalva);
+
+        return consultaSalva;
+    }
+
+    @Transactional
+    public Consulta desmarcarConsulta(Long id) {
+        Consulta consulta = buscarConsultaPorId(id);
+        consulta.setStatus(StatusConsulta.DESMARCADA);
+
+        Consulta consultaAtualizada = consultaRepository.save(consulta);
+
+        // notificarCancelamento(consultaAtualizada);
+
+        return consultaAtualizada;
+    }
+
+    @Transactional
+    public Consulta cancelarConsultaPorMedico(Long id, String justificativa) {
+        if (justificativa == null || justificativa.trim().isEmpty()) {
+            throw new RuntimeException("A justificativa do cancelamento é obrigatória.");
+        }
+        Consulta consulta = buscarConsultaPorId(id);
+        consulta.setStatus(StatusConsulta.DESMARCADA);
+        consulta.setJustificativaCancelamento(justificativa);
+
+        Consulta consultaAtualizada = consultaRepository.save(consulta);
+
+        // emailService.enviarEmailConsultaCanceladaPorMedicoParaPaciente(
+        //         consultaAtualizada.getPaciente().getEmail(),
+        //         consultaAtualizada.getPaciente().getNome(),
+        //         consultaAtualizada.getInicio().toLocalDate().toString(),
+        //         consultaAtualizada.getInicio().toLocalTime().toString(),
+        //         consultaAtualizada.getMedico().getNome(),
+        //         consultaAtualizada.getMedico().getEspecialidade().getNome(),
+        //         justificativa
+        // );
+
+        return consultaAtualizada;
     }
 
     public List<Consulta> listarTodas() {
         return consultaRepository.findAll();
     }
 
-    public Consulta buscarPorId(Long id) {
+    public Consulta buscarConsultaPorId(Long id) {
         return consultaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Consulta não encontrada"));
+                .orElseThrow(() -> new RuntimeException("Consulta não encontrada para o id: " + id));
     }
 
     public List<Consulta> listarPorMedico(Long idMedico) {
@@ -48,25 +105,74 @@ public class ConsultaService {
     }
 
     @Transactional
-    public Consulta desmarcarConsulta(Long id) {
-        Consulta consulta = buscarPorId(id);
-        consulta.setStatus(StatusConsulta.DESMARCADA);
-        return consultaRepository.save(consulta);
-    }
-
-    @Transactional
     public Consulta marcarComoRealizada(Long id) {
-        Consulta consulta = buscarPorId(id);
+        Consulta consulta = buscarConsultaPorId(id);
         consulta.setStatus(StatusConsulta.REALIZADA);
         return consultaRepository.save(consulta);
     }
-
+  
     public List<Consulta> listarConsultasFuturasMedico(Long idMedico) {
         return consultaRepository.findByMedicoIdAndInicioAfter(idMedico, LocalDateTime.now());
     }
 
     public List<Consulta> listarConsultasFuturasPaciente(Long idPaciente) {
         return consultaRepository.findByPacienteIdAndInicioAfter(idPaciente, LocalDateTime.now());
+    }
+
+    private void validarAgendamento(Consulta consulta) {
+        validarHorarioAntecedencia(consulta.getInicio());
+        validarHorarioFuncionamento(consulta.getInicio());
+        validarConflitoConsulta(consulta);
+    }
+
+    private Medico buscarMedicoPorId(Long id) {
+        return medicoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Médico não encontrado para o id: " + id));
+    }
+
+    private Paciente buscarPacientePorId(Long id) {
+        return pacienteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado para o id: " + id));
+    }
+
+    private void notificarAgendamento(Consulta consulta) {
+        emailService.enviarEmailConsultaAgendadaPaciente(
+                consulta.getPaciente().getEmail(),
+                consulta.getPaciente().getNome(),
+                consulta.getInicio().toLocalDate().toString(),
+                consulta.getInicio().toLocalTime().toString(),
+                consulta.getMedico().getNome(),
+                consulta.getMedico().getEspecialidade().getNome()
+        );
+
+        emailService.enviarEmailConsultaAgendadaMedico(
+                consulta.getMedico().getEmail(),
+                consulta.getMedico().getNome(),
+                consulta.getInicio().toLocalDate().toString(),
+                consulta.getInicio().toLocalTime().toString(),
+                consulta.getPaciente().getNome(),
+                consulta.getPaciente().getTelefone()
+        );
+    }
+
+    private void notificarCancelamento(Consulta consulta) {
+        emailService.enviarEmailConsultaCanceladaPaciente(
+                consulta.getPaciente().getEmail(),
+                consulta.getPaciente().getNome(),
+                consulta.getInicio().toLocalDate().toString(),
+                consulta.getInicio().toLocalTime().toString(),
+                consulta.getMedico().getNome(),
+                consulta.getMedico().getEspecialidade().getNome()
+        );
+
+        emailService.enviarEmailConsultaCanceladaMedico(
+                consulta.getMedico().getEmail(),
+                consulta.getMedico().getNome(),
+                consulta.getInicio().toLocalDate().toString(),
+                consulta.getInicio().toLocalTime().toString(),
+                consulta.getPaciente().getNome(),
+                consulta.getPaciente().getTelefone()
+        );
     }
 
     private void validarHorarioAntecedencia(LocalDateTime inicio) {

@@ -78,6 +78,16 @@ CREATE TABLE consulta (
     id_medico INT,
     id_paciente INT,
     status VARCHAR(20) NOT NULL DEFAULT 'AGENDADA',
+    justificativa_cancelamento TEXT,
     FOREIGN KEY (id_medico) REFERENCES medico(id_usuario),
     FOREIGN KEY (id_paciente) REFERENCES paciente(id_usuario)
+);
+
+CREATE TABLE tokens (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    token VARCHAR(512) NOT NULL,
+    revogado BOOLEAN NOT NULL,
+    expirado BOOLEAN NOT NULL,
+    usuario_id INT,
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id_usuario)
 );

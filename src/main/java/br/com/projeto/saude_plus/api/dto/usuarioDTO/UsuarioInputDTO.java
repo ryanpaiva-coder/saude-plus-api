@@ -15,14 +15,14 @@ public class UsuarioInputDTO {
     @NotBlank
     private String nome;
 
-    @CPF
-    @NotBlank
-    @Size(min = 11, max = 11)
-    private String cpf;
-
     @NotBlank
     @Email
     private String email;
+
+    @NotBlank
+    @Size(min = 11, max = 11)
+    @CPF
+    private String cpf;
 
     @NotBlank
     @Size(min = 8, max = 255)
