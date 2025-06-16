@@ -9,6 +9,7 @@ import br.com.projeto.saude_plus.domain.service.ConsultaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -72,6 +73,12 @@ public class ConsultaController {
     @GetMapping("/paciente/{idPaciente}/futuras")
     public ResponseEntity<List<ConsultaOutputDTO>> listarConsultasFuturasPaciente(@PathVariable Long idPaciente) {
         return ResponseEntity.ok(mapToOutputDTOList(consultaService.listarConsultasFuturasPaciente(idPaciente)));
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_MEDICO')")
+    @PatchMapping("/{id}/realizar")
+    public Consulta marcarComoRealizada(@PathVariable Long id) {
+        return consultaService.marcarComoRealizada(id);
     }
 
     private List<ConsultaOutputDTO> mapToOutputDTOList(List<Consulta> consultas) {

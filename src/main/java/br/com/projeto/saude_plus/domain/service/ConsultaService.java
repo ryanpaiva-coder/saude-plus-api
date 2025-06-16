@@ -54,6 +54,13 @@ public class ConsultaService {
         return consultaRepository.save(consulta);
     }
 
+    @Transactional
+    public Consulta marcarComoRealizada(Long id) {
+        Consulta consulta = buscarPorId(id);
+        consulta.setStatus(StatusConsulta.REALIZADA);
+        return consultaRepository.save(consulta);
+    }
+
     public List<Consulta> listarConsultasFuturasMedico(Long idMedico) {
         return consultaRepository.findByMedicoIdAndInicioAfter(idMedico, LocalDateTime.now());
     }
