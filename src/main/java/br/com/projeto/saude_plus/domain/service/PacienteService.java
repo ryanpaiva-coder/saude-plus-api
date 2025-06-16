@@ -36,7 +36,7 @@ public class PacienteService {
         paciente.setRole(buscarRolePaciente());
 
         Paciente pacienteSalvo = pacienteRepository.save(paciente);
-        emailService.enviarEmailBoasVindas(pacienteSalvo);
+        // emailService.enviarEmailBoasVindas(pacienteSalvo);
         return pacienteSalvo;
     }
 
@@ -107,6 +107,6 @@ public class PacienteService {
         Paciente paciente = buscarPorId(id);
         paciente.setAtivo(false);
         pacienteRepository.save(paciente);
-        emailService.enviarEmailDesativamento(paciente);
+        // emailService.enviarEmailDesativamento(paciente);
     }
 }

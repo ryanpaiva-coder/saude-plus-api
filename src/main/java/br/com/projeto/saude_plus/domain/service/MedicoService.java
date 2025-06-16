@@ -46,7 +46,7 @@ public class MedicoService {
         medico.setRole(buscarRoleMedico());
 
         Medico medicoSalvo = medicoRepository.save(medico);
-        emailService.enviarEmailBoasVindas(medicoSalvo);
+        // emailService.enviarEmailBoasVindas(medicoSalvo);
         return medicoSalvo;
     }
 
@@ -62,7 +62,7 @@ public class MedicoService {
         Medico medico = buscarPorId(id);
         medico.setAtivo(false);
         medicoRepository.save(medico);
-        emailService.enviarEmailDesativamento(medico);
+        // emailService.enviarEmailDesativamento(medico);
     }
 
     public Medico buscarPorId(Long id) {

@@ -42,7 +42,7 @@ public class ConsultaService {
 
         Consulta consultaSalva = consultaRepository.save(consulta);
 
-        notificarAgendamento(consultaSalva);
+        // notificarAgendamento(consultaSalva);
 
         return consultaSalva;
     }
@@ -54,7 +54,7 @@ public class ConsultaService {
 
         Consulta consultaAtualizada = consultaRepository.save(consulta);
 
-        notificarCancelamento(consultaAtualizada);
+        // notificarCancelamento(consultaAtualizada);
 
         return consultaAtualizada;
     }
@@ -70,15 +70,15 @@ public class ConsultaService {
 
         Consulta consultaAtualizada = consultaRepository.save(consulta);
 
-        emailService.enviarEmailConsultaCanceladaPorMedicoParaPaciente(
-                consultaAtualizada.getPaciente().getEmail(),
-                consultaAtualizada.getPaciente().getNome(),
-                consultaAtualizada.getInicio().toLocalDate().toString(),
-                consultaAtualizada.getInicio().toLocalTime().toString(),
-                consultaAtualizada.getMedico().getNome(),
-                consultaAtualizada.getMedico().getEspecialidade().getNome(),
-                justificativa
-        );
+        // emailService.enviarEmailConsultaCanceladaPorMedicoParaPaciente(
+        //         consultaAtualizada.getPaciente().getEmail(),
+        //         consultaAtualizada.getPaciente().getNome(),
+        //         consultaAtualizada.getInicio().toLocalDate().toString(),
+        //         consultaAtualizada.getInicio().toLocalTime().toString(),
+        //         consultaAtualizada.getMedico().getNome(),
+        //         consultaAtualizada.getMedico().getEspecialidade().getNome(),
+        //         justificativa
+        // );
 
         return consultaAtualizada;
     }
