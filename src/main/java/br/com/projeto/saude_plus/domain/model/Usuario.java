@@ -125,21 +125,21 @@ public abstract class Usuario implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; // Ajuste conforme regra do seu sistema
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return ativo; // Se ativo for false, conta está bloqueada
+        return ativo;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; // Ajuste conforme regra do seu sistema
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return ativo; // Se ativo for false, conta não está habilitada
+        return ativo;
     }
 }
