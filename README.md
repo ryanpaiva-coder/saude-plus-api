@@ -19,7 +19,7 @@
 
 O Saúde+ é um sistema que moderniza o agendamento de consultas, eliminando a dependência de filas, telefonemas e anotações manuais.
 
-A plataforma permite que pacientes marquem e cancelem atendimentos de forma rápida, com confirmação imediata por e-mail.
+A plataforma permite que pacientes marquem e cancelem atendimentos de forma rápida.
 
 Para os médicos, o sistema centraliza todo o histórico de agendamentos em um painel único, simplificando a gestão da agenda e a comunicação com os pacientes.
 
@@ -31,7 +31,7 @@ Este projeto foi desenvolvido como parte do trabalho da A3, construído com Java
 
 - Gestão de Pacientes: Permite o cadastro. 
 - Agendamento de Consultas: Pacientes e administradores podem agendar consultas com médico. 
-- Cancelamento de Consultas: Permite o cancelamento de atendimentos com notificação por e-mail para o paciente e o médico. 
+- Cancelamento de Consultas: Permite o cancelamento de atendimentos com o médico. 
 - Autenticação e Perfis: Usuários (pacientes, médicos e gerentes) podem realizar login  e visualizar seus perfis. 
 - Gestão da Clínica: Gerentes podem gerenciar médicos e visualizar relatórios de desempenho da clínica. 
 - Segurança: Senhas e dados sensíveis são criptografados, e o sistema possui proteção contra ataques comuns. 
